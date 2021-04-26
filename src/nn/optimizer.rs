@@ -78,6 +78,7 @@ pub struct Adam {
     pub beta1: f64,
     pub beta2: f64,
     pub wd: f64,
+    pub eps: f64,
 }
 
 impl Default for Adam {
@@ -86,18 +87,23 @@ impl Default for Adam {
             beta1: 0.9,
             beta2: 0.999,
             wd: 0.,
+            eps: 1e-8,
         }
     }
 }
 
 /// Creates the configuration for the Adam optimizer.
 pub fn adam(beta1: f64, beta2: f64, wd: f64) -> Adam {
-    Adam { beta1, beta2, wd }
+    Adam { beta1, beta2, wd , eps: 1e-8 }
+}
+
+pub fn adam_with_eps(beta1: f64, beta2: f64, wd: f64, eps: f64) -> Adam {
+    Adam { beta1, beta2, wd , eps }
 }
 
 impl OptimizerConfig for Adam {
     fn build_copt(&self, lr: f64) -> Result<COptimizer, TchError> {
-        COptimizer::adam(lr, self.beta1, self.beta2, self.wd)
+        COptimizer::adam(lr, self.beta1, self.beta2, self.wd, self.eps)
     }
 }
 
